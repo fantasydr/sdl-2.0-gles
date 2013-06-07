@@ -20665,6 +20665,107 @@ $as_echo "#define SDL_VIDEO_RENDER_OGL_ES2 1" >>confdefs.h
     fi
 }
 
+CheckWINDOWSGLES()
+{
+    if test x$enable_video = xyes -a x$enable_video_opengles = xyes; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for OpenGL ES (EGL) support" >&5
+$as_echo_n "checking for OpenGL ES (EGL) support... " >&6; }
+        video_opengles=no
+        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+         #include <EGL/egl.h>
+
+int
+main ()
+{
+
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+
+        video_opengles=yes
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: $video_opengles" >&5
+$as_echo "$video_opengles" >&6; }
+        if test x$video_opengles = xyes; then
+            { $as_echo "$as_me:${as_lineno-$LINENO}: checking for OpenGL ES v1 headers" >&5
+$as_echo_n "checking for OpenGL ES v1 headers... " >&6; }
+            video_opengles_v1=no
+            cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+             #include <GLES/gl.h>
+             #include <GLES/glext.h>
+
+int
+main ()
+{
+
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+
+            video_opengles_v1=yes
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: $video_opengles_v1" >&5
+$as_echo "$video_opengles_v1" >&6; }
+            if test x$video_opengles_v1 = xyes; then
+
+$as_echo "#define SDL_VIDEO_OPENGL_ES 1" >>confdefs.h
+
+
+$as_echo "#define SDL_VIDEO_RENDER_OGL_ES 1" >>confdefs.h
+
+            fi
+            { $as_echo "$as_me:${as_lineno-$LINENO}: checking for OpenGL ES v2 headers" >&5
+$as_echo_n "checking for OpenGL ES v2 headers... " >&6; }
+            video_opengles_v2=no
+            cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+             #include <GLES2/gl2.h>
+             #include <GLES2/gl2ext.h>
+
+int
+main ()
+{
+
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+
+            video_opengles_v2=yes
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: $video_opengles_v2" >&5
+$as_echo "$video_opengles_v2" >&6; }
+            if test x$video_opengles_v2 = xyes; then
+
+$as_echo "#define SDL_VIDEO_OPENGL_ES2 1" >>confdefs.h
+
+
+$as_echo "#define SDL_VIDEO_RENDER_OGL_ES2 1" >>confdefs.h
+
+            fi
+        fi
+    fi
+}
+
 CheckWINDOWSGL()
 {
     if test x$enable_video = xyes -a x$enable_video_opengl = xyes; then
@@ -22168,6 +22269,7 @@ $as_echo "#define SDL_TIMER_UNIX 1" >>confdefs.h
         CheckDummyAudio
         CheckWINDOWS
         CheckWINDOWSGL
+		CheckWINDOWSGLES
         CheckDIRECTX
 
         # Set up the core platform files

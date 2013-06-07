@@ -29,6 +29,7 @@
 
 #if SDL_VIDEO_OPENGL_WGL
 #include "SDL_opengl.h"
+#include "SDL_windowsopengles.h"
 
 #define DEFAULT_OPENGL "OPENGL32.DLL"
 
@@ -78,6 +79,28 @@ WIN_GL_LoadLibrary(_THIS, const char *path)
 {
     LPTSTR wpath;
     HANDLE handle;
+
+    if (_this->gl_data) {
+        return SDL_SetError("OpenGL context already created");
+    }
+
+    /* If SDL_GL_CONTEXT_EGL has been changed to 1, switch over to WIN_GLES functions  */
+    if (_this->gl_config.use_egl == 1) {
+#if SDL_VIDEO_OPENGL_ES || SDL_VIDEO_OPENGL_ES2
+        _this->GL_LoadLibrary = WIN_GLES_LoadLibrary;
+        _this->GL_GetProcAddress = WIN_GLES_GetProcAddress;
+        _this->GL_UnloadLibrary = WIN_GLES_UnloadLibrary;
+        _this->GL_CreateContext = WIN_GLES_CreateContext;
+        _this->GL_MakeCurrent = WIN_GLES_MakeCurrent;
+        _this->GL_SetSwapInterval = WIN_GLES_SetSwapInterval;
+        _this->GL_GetSwapInterval = WIN_GLES_GetSwapInterval;
+        _this->GL_SwapWindow = WIN_GLES_SwapWindow;
+        _this->GL_DeleteContext = WIN_GLES_DeleteContext;
+        return WIN_GLES_LoadLibrary(_this, path);
+#else
+        return SDL_SetError("SDL not configured with OpenGL ES/EGL support");
+#endif
+    }
 
     if (path == NULL) {
         path = SDL_getenv("SDL_OPENGL_LIBRARY");

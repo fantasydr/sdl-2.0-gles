@@ -30,6 +30,10 @@
 #include "SDL_windowsvideo.h"
 #include "SDL_windowswindow.h"
 
+#if SDL_VIDEO_OPENGL_ES || SDL_VIDEO_OPENGL_ES2
+#include "SDL_windowsopengles.h"
+#endif
+
 /* Dropfile support */
 #include <shellapi.h>
 
@@ -268,9 +272,22 @@ WIN_CreateWindow(_THIS, SDL_Window * window)
         DestroyWindow(hwnd);
         return -1;
     }
-#if SDL_VIDEO_OPENGL_WGL
+#if SDL_VIDEO_OPENGL_WGL || SDL_VIDEO_OPENGL_ES || SDL_VIDEO_OPENGL_ES2
     if (window->flags & SDL_WINDOW_OPENGL) {
-        if (WIN_GL_SetupWindow(_this, window) < 0) {
+        int ret = -1;
+
+#if SDL_VIDEO_OPENGL_ES || SDL_VIDEO_OPENGL_ES2
+        if (_this->gl_config.use_egl == 1) {
+            ret = WIN_GLES_SetupWindow(_this, window);
+        } else
+#endif
+        {
+#if SDL_VIDEO_OPENGL_WGL
+            ret = WIN_GL_SetupWindow(_this, window);
+#endif
+        }
+
+        if (ret < 0) {
             WIN_DestroyWindow(_this, window);
             return -1;
         }

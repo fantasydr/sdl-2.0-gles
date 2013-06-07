@@ -171,6 +171,15 @@ typedef unsigned int uintptr_t;
 #ifndef SDL_VIDEO_OPENGL
 #define SDL_VIDEO_OPENGL    1
 #endif
+
+//#ifndef SDL_VIDEO_OPENGL_ES
+//#define SDL_VIDEO_OPENGL_ES    1
+//#endif
+
+#ifndef SDL_VIDEO_OPENGL_ES2
+#define SDL_VIDEO_OPENGL_ES2    1
+#endif
+
 #ifndef SDL_VIDEO_OPENGL_WGL
 #define SDL_VIDEO_OPENGL_WGL    1
 #endif
