@@ -321,6 +321,29 @@ WIN_CreateWindowFrom(_THIS, SDL_Window * window, const void *data)
     if (SetupWindowData(_this, window, hwnd, SDL_FALSE) < 0) {
         return -1;
     }
+#if SDL_VIDEO_OPENGL_WGL || SDL_VIDEO_OPENGL_ES || SDL_VIDEO_OPENGL_ES2
+    if(_this->gl_config.driver_loaded) {
+        int ret = -1;
+
+#if SDL_VIDEO_OPENGL_ES || SDL_VIDEO_OPENGL_ES2
+        if (_this->gl_config.use_egl == 1) {
+            ret = WIN_GLES_SetupWindow(_this, window);
+        } else
+#endif
+        {
+#if SDL_VIDEO_OPENGL_WGL
+            ret = WIN_GL_SetupWindow(_this, window);
+#endif
+        }
+
+        if (ret < 0) {
+            WIN_DestroyWindow(_this, window);
+            return -1;
+        }
+
+        window->flags |= SDL_WINDOW_OPENGL;
+    }
+#endif
     return 0;
 }
 
