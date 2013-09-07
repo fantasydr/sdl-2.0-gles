@@ -1589,6 +1589,29 @@ AC_MSG_WARN("directfb $directfb_lib")
     fi
 }
 
+dnl Find Raspberry PI/Broadcom
+CheckRPI()
+{
+    AC_ARG_ENABLE(rpi,
+AC_HELP_STRING([--enable-rpi], [support Raspberry PI [[default=no]]]),
+                  , enable_rpi=no)
+    if test x$enable_video = xyes -a x$enable_rpi = xyes; then
+      AC_CHECK_HEADER(bcm_host.h, have_rpi_hdr=yes)
+      AC_CHECK_LIB(bcm_host, bcm_host_init, have_rpi_lib=yes)
+      AC_MSG_CHECKING(for Raspberry PI)
+      dnl have_rpi=no
+      if test x$have_rpi_hdr = xyes -a x$have_rpi_lib = xyes; then
+      dnl if test x$have_rpi_lib = xyes; then
+        have_rpi=yes
+        RPI_LIBS="-lbcm_host"
+        AC_DEFINE(SDL_VIDEO_DRIVER_RPI, 1, [ ]) 
+        SOURCES="$SOURCES $srcdir/src/video/rpi/*.c"
+        have_video=yes
+      fi
+      AC_MSG_RESULT($have_raspberrypi)
+  fi
+}
+
 dnl Find FusionSound
 CheckFusionSound()
 {
@@ -2374,6 +2397,7 @@ case "$host" in
         CheckSNDIO
         CheckX11
         CheckDirectFB
+        CheckRPI
         CheckFusionSound
         CheckOpenGLX11
         CheckOpenGLESX11
