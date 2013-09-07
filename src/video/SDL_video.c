@@ -2510,6 +2510,7 @@ SDL_GL_SetAttribute(SDL_GLattr attr, int value)
         break;
     case SDL_GL_CONTEXT_EGL:
         /* FIXME: SDL_GL_CONTEXT_EGL to be deprecated in SDL 2.1 */
+        _this->gl_config.use_egl = value;
         if (value != 0) {
             SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
         } else {
